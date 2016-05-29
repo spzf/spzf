@@ -1,0 +1,107 @@
+package com.spzf.model.privilege;
+
+import java.io.Serializable;
+
+import com.spzf.model.BaseModel;
+
+/**
+ * @author 
+ 
+ * @date 2014-08-08 13:56:39
+ */
+public class CompanyInfo extends BaseModel implements Serializable{
+	private static final long serialVersionUID = -3031407451150188286L;
+
+	/**
+     * 
+     */
+    private String id;
+    
+    /**
+     * 公司中文名称
+     */
+    private String cname;
+    
+    /**
+     * 公司英文名称
+     */
+    private String ename;
+    
+    /**
+     * 公司code
+     */
+    private String code;
+    
+    /**
+     * 描述
+     */
+    private String descr;
+    
+    //临时变量
+    private String createDate;
+
+	public String getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(String createDate) {
+		this.createDate = createDate;
+	}
+
+	public String getId()
+    {
+        return id;
+    }
+        
+    public void setId(String id)
+    {
+        this.id = id;
+    }
+        
+    public String getCname()
+    {
+        return cname;
+    }
+        
+    public void setCname(String cname)
+    {
+        this.cname = cname;
+    }
+        
+    public String getEname()
+    {
+        return ename;
+    }
+        
+    public void setEname(String ename)
+    {
+        this.ename = ename;
+    }
+        
+    public String getCode()
+    {
+        return code;
+    }
+        
+    public void setCode(String code)
+    {
+        this.code = code;
+    }
+        
+    public String getDescr()
+    {
+        return descr;
+    }
+        
+    public void setDescr(String descr)
+    {
+        this.descr = descr;
+    }
+
+	@Override
+	public String toString() {
+		return "CompanyInfo [id=" + id + ", cname=" + cname + ", ename="
+				+ ename + ", code=" + code + ", descr=" + descr
+				+ ", createDate=" + createDate + "]";
+	}
+}

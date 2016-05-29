@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+	PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<!-- 配置mybatis的一些参数 -->
+	<settings>
+		<setting name="cacheEnabled" value="false" />
+		<setting name="lazyLoadingEnabled" value="false" />
+		<setting name="multipleResultSetsEnabled" value="true" />
+		<setting name="useColumnLabel" value="true" />
+		<setting name="defaultStatementTimeout" value="25000" />
+		<setting name="useGeneratedKeys" value="true" />
+		<setting name="defaultExecutorType" value="REUSE" />
+	</settings>
+	<!-- 配置别名 -->
+	<typeAliases>
+		<!-- 数据字典 -->
+		<typeAlias alias="dictionary" type="com.spzf.model.dictionary.Dictionary" />
+		<!-- 用户 -->
+		<typeAlias alias="user" type="com.spzf.model.user.User" />
+		<typeAlias alias="userRole" type="com.spzf.model.user.UserRole" />
+		<typeAlias alias="userSystem" type="com.spzf.model.user.UserSystem" />
+		<!-- 角色 -->
+		<typeAlias alias="role" type="com.spzf.model.role.Role" />
+		<!-- 模块-->
+		<typeAlias alias="module" type="com.spzf.model.module.Module" />
+		<!-- 部门 -->
+		<typeAlias alias="department" type="com.spzf.model.dept.Department" />
+		<!-- 权限 -->
+		<typeAlias alias="sessionData" type="com.spzf.model.privilege.SessionData" />
+		<typeAlias alias="systemPrivilegeValue" type="com.spzf.model.privilege.SystemPrivilegeValue" />
+		<typeAlias alias="acl" type="com.spzf.model.frame.ACL" />
+		<!-- 系统配置相关 -->
+		<typeAlias alias="systemConfig" type="com.spzf.model.system.SystemConfig" />
+		<!-- 登录日志 -->
+		<typeAlias alias="loginLog" type="com.spzf.model.loginlog.LoginLog" />
+		<!-- 系统信息 -->
+		<typeAlias alias="icSystem" type="com.spzf.model.icsystem.ICSystem" />
+	</typeAliases>
+
+	<plugins>
+		<plugin
+			interceptor="com.github.miemiedev.mybatis.paginator.OffsetLimitInterceptor">
+			<property name="dialectClass"
+				value="com.github.miemiedev.mybatis.paginator.dialect.MySQLDialect" />
+		</plugin>
+	</plugins>
+
+</configuration>

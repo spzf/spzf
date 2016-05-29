@@ -1,0 +1,89 @@
+package com.spzf.api.privilege;
+
+import java.util.List;
+
+import com.spzf.common.PrivilegeException;
+import com.spzf.model.role.Role;
+import com.spzf.model.system.SystemConfig;
+import com.spzf.model.user.User;
+import com.spzf.vo.privilege.LoginVo;
+import com.spzf.vo.privilege.UserAcls;
+
+/**
+ * 权限系统提供对外接口
+ * 
+ * @Author:
+ * @Since:2014年4月16日
+ * @Version:1.1.0
+ * @Copyright:Copyright (c) 2014 ~ 2015 版权所有
+ */
+public interface IPrivilegeApi {
+	/**
+	 * 通过key得到SystemConfig
+	 * @param key
+	 * @return
+	 * @throws PrivilegeException
+	 */
+	public SystemConfig findSystemConfigByKey(String key)
+			throws PrivilegeException;
+
+	/**
+	 * 登录接口
+	 * 
+	 * @param username
+	 *            用户名
+	 * @param password
+	 *            密码
+	 * @param companyId
+	 *            公司Id
+	 * @param ip
+	 *            ip
+	 * @param systemSn
+	 *            系统标示
+	 * @return
+	 * @throws PrivilegeException
+	 */
+	public LoginVo login(String username, String password, String companyId,
+			String ip, String systemSn) throws PrivilegeException;
+
+	/**
+	 * 通过用户id得到角色列表
+	 * 
+	 * @param userId
+	 * @return
+	 * @throws PrivilegeException
+	 */
+	public List<Role> getRolesByUserId(String userId) throws PrivilegeException;
+
+	/**
+	 * 通过角色标示得到用户列表
+	 * 
+	 * @param roleSns
+	 * @return
+	 */
+	List<User> getUserByRoleSns(String... roleSns) throws PrivilegeException;
+
+	/**
+	 * 判断是否有该模块的权限
+	 * 
+	 * @param sessionId
+	 *            sessionId
+	 * @param systemSn
+	 *            系统标示
+	 * @param moduleSn
+	 *            模块标示
+	 * @param permission
+	 *            权限值
+	 * @return
+	 */
+	public boolean hasPermission(String sessionId, String systemSn,
+			String moduleSn, Integer permission);
+
+	/**
+	 * 通过sessionId得到sessinMap
+	 * 
+	 * @param sessionId
+	 * @return UserAcls
+	 */
+	public UserAcls getUserAclsBySessionId(String sessionId);
+}

@@ -1,0 +1,242 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<%@include file="/WEB-INF/page/share/taglib.jsp"%>
+<title>系统列表</title>
+</head>
+<body class="easyui-layout">
+	<div data-options="region:'north',border:false">
+		<div id="toolbar" class="easyui-toolbar">
+			<c:if test="${my:hasPermission(sessionId,'privilege','icsystem', 0)}">
+				<a href="javascript:;" iconCls="icon-add" plain="true" onclick="add()">添加</a><a>-</a>
+			</c:if>
+			<c:if test="${my:hasPermission(sessionId,'privilege','icsystem', 2)}">
+				<a href="javascript:;" iconCls="icon-edit" plain="true" onclick="edit()">修改</a><a>-</a>
+			</c:if>
+			<c:if test="${my:hasPermission(sessionId,'privilege','icsystem', 3)}">
+				<a href="javascript:;" iconCls="icon-remove" plain="true" onclick="del()">删除</a>
+			</c:if>
+		</div>
+		<div style="padding:10px;">
+		<form name="searchFm" id="searchFm" method="post">
+                  <table class="search-tb">
+                     <tbody>
+                        <tr>
+                        	<td>系统名称：
+                        		<input class="ipt" name="name"/>
+                        	</td>
+                            <td>系统标识：
+                            	<input class="ipt" name="sn"/>
+                            </td>
+                            <td>
+								<a href="javascript:void(0)" class="easyui-linkbutton"
+									iconCls="icon-search" id="searchBtn">查询</a>
+								<a id="resetBtn" href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove">重置</a>
+                            </td>
+						</tr>
+					</tbody>
+				</table>
+		</form>
+		</div>
+	</div>
+	<div data-options="region:'center',border:false">
+		<table id="dg">
+		</table>
+	</div>
+</body>
+<script type="text/javascript">
+	var dataList=null;
+	function parsePage() {
+			dataList=$('#dg').datagrid({
+			url: '${basePath}managment/privilege/icsystem/ajaxlist.do?sessionId=${sessionId}',
+			singleSelect : false,
+			fitColumns : true,
+			checkOnSelect : true,
+			selectOnCheck : true,
+			pageSize: 20,
+			pageList: [20,50,100],
+			columns : [ [ {
+				checkbox : true
+			}, {
+				title : '名称',
+				field : 'name',
+				width : 100,
+				align : 'left'
+			}, {
+				title : '标识',
+				field : 'sn',
+				width : 70,
+				align : 'left'
+			}, {
+				title : 'url前缀',
+				field : 'url',
+				width : 200,
+				align : 'left'
+			}, {
+				title : '排序号',
+				field : 'orderNo',
+				width : 30
+			}, {
+				title : '备注',
+				field : 'note',
+				width : 100,
+				align : 'left'
+			} ] ],
+			onLoadSuccess : function() {
+			}
+		});
+		$("#searchBtn").click(function(){
+			var fdata=$("#searchFm").form("getData");
+			dataList.datagrid('load',fdata);
+		});
+		$("#resetBtn").click(function(){
+			$("#searchFm").form("reset");
+		});
+	}
+	
+	//验证标识的唯一性
+	$.extend($.fn.validatebox.defaults.rules, {
+	    unique: {
+	    validator: function(value, param){
+	    	var valid=true;
+	    	var formData=$("#formU").form("getData");
+	    	$.ajax({
+	    		async:false,
+	    		url:'${basePath}managment/privilege/icsystem/checkSnExsits.do?sessionId=${sessionId}',
+	    		data:{sn : value,id : formData.id},
+	    		success:function(json){
+	    			if(json==1){
+	    				valid=false;
+	    			}
+	    		}
+	    	});
+	    	return valid;
+	    },
+	    message: '标识不能重复!'
+	    }
+	});
+	
+	function add() {
+		$("body").append('<div id="addUI"></div>');
+		$('#addUI').dialog({    
+		    title: '新增系统',    
+		    width: 500,    
+		    height: 280,    
+		    closed: false,    
+		    cache: false,    
+		    href: '${basePath}managment/privilege/icsystem/insertUI.do?sessionId=${sessionId}',    
+		    modal: true,
+		    buttons : [{
+				text:'保存',
+				handler:function(){
+					var form=$("#formA");
+					if(form.form('validate')){
+						$.messager.progress(); 
+						var data=form.form("getData");
+						$.post(
+							'${basePath }managment/privilege/icsystem/insert.do?sessionId=${sessionId}',
+							data,
+							function(result){
+								$.messager.progress('close');
+								if(result.responseCode==100){
+									$('#addUI').dialog('close');
+									$('#addUI').remove();
+									dataList.datagrid("reload");
+								}else{
+									$.messager.alert('信息','保存失败！','info');
+								}
+							},'json'
+						);
+					}
+				}
+			},{
+				text:'关闭',
+				handler:function(){$('#addUI').dialog('close');$('#addUI').remove();}
+			}]
+		});    
+	}
+	
+	function edit() {
+		var data=dataList.datagrid("getSelected");
+		if(!data){
+			$.messager.alert('信息','请选择一条记录！','info');
+			return;
+		}
+		$("body").append('<div id="editUI"></div>');
+		$('#editUI').dialog({    
+		    title: '编辑系统',    
+		    width: 500,    
+		    height: 280,    
+		    closed: false,    
+		    cache: false,    
+		    href: '${basePath}managment/privilege/icsystem/updateUI.do?sessionId=${sessionId}',    
+		    modal: true,
+		    buttons : [{
+				text:'保存',
+				handler:function(){
+					var form=$("#formU");
+					if(form.form('validate')){
+						$.messager.progress(); 
+						var fdata=form.form("getData");
+						$.post(
+							'${basePath }managment/privilege/icsystem/update.do?sessionId=${sessionId}',
+							fdata,
+							function(result){
+								$.messager.progress('close');
+								if(result.responseCode==100){
+									$('#editUI').dialog('close');
+									$('#editUI').remove();
+									dataList.datagrid("reload");
+								}else{
+									$.messager.alert('信息','保存失败！','info');
+								}
+							},'json'
+						);
+					}
+				}
+			},{
+				text:'关闭',
+				handler:function(){$('#editUI').dialog('close');$('#editUI').remove();}
+			}],
+			onLoad : function (){
+				var form=$("#formU");
+				form.form("load",data);
+			}
+		});    
+	}
+	
+	function del() {
+		var rows=dataList.datagrid("getSelections");
+		if (rows && rows.length > 0) {
+			$.messager.confirm("信息", "确定删除选中记录？", function(r) {
+				if (r) {
+					$.messager.progress(); 
+					var ids = [];
+					for ( var i = 0, l = rows.length; i < l; i++) {
+						var r = rows[i];
+						ids.push(r.id);
+					}
+					var id = ids.join(',');
+					$.ajax({
+						url : "${basePath}managment/privilege/icsystem/delete.do?sessionId=${sessionId}&ids="
+								+ id,
+						dataType : 'json',
+						success : function(text) {
+							$.messager.progress('close');
+							if (text.responseCode == 101) {
+								$.messager.alert(text.responseMsg);
+							}else{
+								dataList.datagrid("reload");
+							}
+						}
+					});
+				}
+			});
+		} else {
+			$.messager.alert('信息','请选择要删除的记录！','info');
+		}
+	}
+</script>
+</html>

@@ -1,0 +1,52 @@
+package com.spzf.dao.privilege.impl;
+
+import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+import com.spzf.common.PagerModel;
+import com.spzf.common.Query;
+import com.spzf.dao.MybatisTemplate;
+import com.spzf.dao.privilege.ICompanyInfoDao;
+import com.spzf.model.privilege.CompanyInfo;
+
+/**
+ * @author 
+ * @date 2014-08-08 13:56:39
+ */
+@Repository
+public class CompanyInfoDaoImpl extends MybatisTemplate implements ICompanyInfoDao {
+
+	@Override
+	public CompanyInfo getCompanyInfoById(String id) throws Exception {
+		return (CompanyInfo)this.selectOne("CompanyInfoXML.getCompanyInfoById", id);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<CompanyInfo> getAll(CompanyInfo companyInfo) throws Exception {
+		return (List<CompanyInfo>)this.selectList("CompanyInfoXML.getAll", companyInfo);
+	}
+
+	@Override
+	public PagerModel<CompanyInfo> getPagerModelByQuery(CompanyInfo companyInfo, Query query)
+			throws Exception {
+		return this.getPagerModelByQuery(companyInfo, query, "CompanyInfoXML.getPagerModelByQuery");
+	}
+
+	@Override
+	public void insertCompanyInfo(CompanyInfo companyInfo) throws Exception {
+		this.insert("CompanyInfoXML.insertCompanyInfo", companyInfo);
+	}
+	
+	@Override
+	public void delCompanyInfoById(String id) throws Exception {
+		this.delete("CompanyInfoXML.delCompanyInfoById", id);
+	}
+
+	@Override
+	public void updateCompanyInfo(CompanyInfo companyInfo) throws Exception {
+		this.update("CompanyInfoXML.updateCompanyInfo", companyInfo);
+	}
+}
+

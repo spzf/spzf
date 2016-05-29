@@ -1,0 +1,52 @@
+package com.spzf.dao.privilege.impl;
+
+import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+import com.spzf.common.PagerModel;
+import com.spzf.common.Query;
+import com.spzf.dao.MybatisTemplate;
+import com.spzf.dao.privilege.IUserCompanyDao;
+import com.spzf.model.privilege.UserCompany;
+
+/**
+ * @author 
+ * @date 
+ */
+@Repository
+public class UserCompanyDaoImpl extends MybatisTemplate implements IUserCompanyDao {
+
+	@Override
+	public UserCompany getUserCompanyById(String id) throws Exception {
+		return (UserCompany)this.selectOne("UserCompanyXML.getUserCompanyById", id);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<UserCompany> getAll(UserCompany userCompany) throws Exception {
+		return (List<UserCompany>)this.selectList("UserCompanyXML.getAll", userCompany);
+	}
+
+	@Override
+	public PagerModel<UserCompany> getPagerModelByQuery(UserCompany userCompany, Query query)
+			throws Exception {
+		return this.getPagerModelByQuery(userCompany, query, "UserCompanyXML.getPagerModelByQuery");
+	}
+
+	@Override
+	public void insertUserCompany(UserCompany userCompany) throws Exception {
+		this.insert("UserCompanyXML.insertUserCompany", userCompany);
+	}
+	
+	@Override
+	public void delUserCompanyByUserId(String userId) throws Exception {
+		this.delete("UserCompanyXML.delUserCompanyById", userId);
+	}
+
+	@Override
+	public void updateUserCompany(UserCompany userCompany) throws Exception {
+		this.update("UserCompanyXML.updateUserCompany", userCompany);
+	}
+}
+

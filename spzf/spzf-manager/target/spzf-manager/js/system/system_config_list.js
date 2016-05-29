@@ -1,0 +1,199 @@
+var SystemConfigList={};
+var dataList=null;
+//初始化
+function parsePage(){
+	SystemConfigList.init();
+}
+
+SystemConfigList.init = function(){
+	SystemConfigList.initToolSearch();
+	SystemConfigList.initDatagrid();
+	
+};
+
+//搜索工具
+SystemConfigList.initToolSearch=function(){
+	toolSearch({
+	    items: [
+	        {"text":"配置名称","name":"configName"}
+	    ],
+	    collapsible:false, 
+	    callback: function (key, name) {
+	        if (key == "") {
+	        	$.messager.alert('提示', '请输入关键字', 'info')
+	            return false;
+	        }
+	        var jsonString='{"'+name+'" : "'+key+'"}';
+	        jsonString=jQuery.parseJSON(jsonString);
+	        $('#tbList').datagrid('load', jsonString);
+	    }
+	});
+};
+
+//查询
+SystemConfigList.doSearch=function() {
+	var json=$("#searchForm").form("getData");
+	$('#tbList').datagrid('load', json);
+};
+
+//重置
+SystemConfigList.doReset=function(){
+	$("#searchForm").form("reset");
+};
+
+//列表
+SystemConfigList.initDatagrid=function(){
+	dataList=$('#tbList').datagrid({
+		url: basePATH + 'managment/systemConfig/ajaxList.do?sessionId='+sessionId,
+		singleSelect : false,
+		fitColumns : true,
+		checkOnSelect : true,
+		selectOnCheck : true,
+		striped:true,
+		rownumbers:true,
+		pagePosition:'both',
+		showFooter:true,
+		multiSort:true,
+		pageSize: 20,
+		columns : [[{
+				checkbox : true
+			},{
+				title : '配置名称',
+				field : 'configName',
+				sortable:true,
+				width : 20
+			},{
+				title : '配置标识',
+				field : 'configSn',
+				sortable:true,
+				width : 10
+			},{
+				title : '配置key',
+				field : 'configKey',
+				sortable:true,
+				width : 20
+			},{
+				title : '配置key的value值',
+				field : 'configValue',
+				sortable:true,
+				width : 20
+			},{
+				title : '排序',
+				field : 'configOrder',
+				sortable:true,
+				width : 10
+			},{
+				title : '备注',
+				field : 'note',
+				sortable:true,
+				width : 20
+			}
+		]],
+		onLoadSuccess : function() {
+		}
+	});
+};
+
+//新增
+SystemConfigList.add = function() {
+	ygDialog({
+        title:'新增系统配置',
+        width: 500,    
+        height: 320, 
+		maximizable:false,
+        closed: false,
+		cache: false,
+        href:  basePATH + 'managment/systemConfig/addUI.do?sessionId='+sessionId,  
+        modal: true,
+		resizable:false,
+		buttons:[{
+			text:'保存',
+			id:'addButton',
+			iconCls:'icon-save',
+			handler:function(dialog){
+				add(dialog);
+			}
+		}]
+    });
+};
+
+//修改
+SystemConfigList.edit = function() {
+	var data=dataList.datagrid("getSelected");
+	if(!data){
+		$.messager.alert('信息','请选择一条记录！','info');
+		return;
+	}
+	ygDialog({
+        title:'编辑系统配置',
+        width: 500,    
+        height: 300, 
+		maximizable:false,
+        closed: false,
+		cache: false,
+        href:  basePATH+ 'managment/systemConfig/updateUI.do?sessionId='+sessionId,
+        modal: true,
+		resizable:false,
+		buttons:[{
+			text:'保存',
+			id:'updateButton',
+			iconCls:'icon-save',
+			handler:function(dialog){
+				edit(dialog);
+			}
+		}],
+		onLoad : function (){
+			var form=$("#formU");
+			form.form("load",data);
+		}
+    });
+	
+	
+};
+
+//删除
+SystemConfigList.del = function() {
+	var rows=dataList.datagrid("getSelections");
+	if (rows && rows.length > 0) {
+		$.messager.confirm("提示","确定删除？",function(r) {
+			if (r) {
+				var ids = [];
+				for ( var i = 0, l = rows.length; i < l; i++) {
+					var r = rows[i];
+					ids.push(r.id);
+				}
+				var id = ids.join(',');
+				$.ajax({
+					url : basePATH + "managment/systemConfig/delete.do?sessionId="+sessionId+"&idStrs="+ id,
+					dataType : 'json',
+					success : function(text) {
+						if (text.responseCode == 101) {
+							$.messager.alert(text.responseMsg);
+						}else{
+							$.messager.show({title:'提示',msg:'删除成功！',timeout:1000,position:'bottomRight',showType:'slide'});
+							dataList.datagrid("reload");
+						}
+					}
+				});
+			}
+		});
+	} else {
+		$.messager.alert('信息','请选择要删除的记录！','info');
+	}
+};
+
+
+//同步
+SystemConfigList.initData = function() {
+	$.ajax({
+		url : basePATH + "managment/systemConfig/init.do?sessionId="+sessionId,
+		dataType : 'json',
+		success : function(text) {
+			if (text.responseCode == 101) {
+				mini.alert(text.responseMsg);
+			}
+			dataList.datagrid("reload");
+		}
+	});
+};
+
