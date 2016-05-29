@@ -92,10 +92,10 @@ public class FrameController {
 
 	// 得到模块树
 	private List<Node> getNodes(List<Module> modules, String url, String sessionId) throws Exception {
-		if (modules == null) {
-			return null;
-		}
 		List<Node> nodes = new ArrayList<Node>();
+		if (modules == null) {
+			return nodes;
+		}
 		for (int i = 0; i < modules.size(); i++) {
 			Module m = modules.get(i);
 			Node node = new Node();
