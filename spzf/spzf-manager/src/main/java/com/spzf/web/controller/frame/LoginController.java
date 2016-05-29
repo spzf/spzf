@@ -104,7 +104,7 @@ public class LoginController extends BaseController {
 	 * @param username
 	 * @param password
 	 * @return
-	 * @Description: 用户退出
+	 * @Description: 用户登录
 	 */
 	@ResponseBody
 	@RequestMapping("/login")
@@ -114,6 +114,7 @@ public class LoginController extends BaseController {
 		User user = null;
 		String sessionId = "0";
 		try {
+			
 			// 1:查询到用户对象
 			user = userService.login(username, password);
 			// 如果选择了就放到cookie里面 这个必须放在登录成功之后
